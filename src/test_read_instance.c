@@ -5,7 +5,7 @@
 #include "types/forfeit_set.h"
 #include "types/knacksack_instance.h"
 #include "types/solution.h"
-#include "util.c"
+#include "util/util_instance.c"
 
 int main() {
     KnapsackInstance instance;
