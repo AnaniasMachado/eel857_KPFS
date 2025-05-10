@@ -19,11 +19,13 @@ int main() {
         printf("Capacity: %d\n", instance.capacity);
         printf("Number of forfeit sets: %d\n", instance.forfeit_count);
 
-        int max_iterations = 10;
-        int ls_max_iterations = 2;
+        // int max_iterations = 10;
+        int ls_max_iterations = 5;
 
-        Solution* sol = iterated_local_search(&instance, max_iterations, ls_max_iterations);
+        // Solution* sol = iterated_local_search(&instance, max_iterations, ls_max_iterations);
+        Solution* sol = iterated_local_search(&instance, ls_max_iterations);
         printf("Solution objective value: %d\n", objective_value(sol));
+        printf("Viability: %d\n", instance.capacity - sol->total_weight);
 
         // Free memory
         freeInstance(&instance);
