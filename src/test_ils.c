@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "types/item.h"
 #include "types/forfeit_set.h"
@@ -21,6 +22,7 @@ int main() {
 
         // int max_iterations = 10;
         int ls_max_iterations = 5;
+        srand(time(NULL));
 
         // Solution* sol = iterated_local_search(&instance, max_iterations, ls_max_iterations);
         Solution* sol = iterated_local_search(&instance, ls_max_iterations);

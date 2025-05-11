@@ -1,5 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
+#include "../util/util_misc.c"
+
+int objective_value(Solution *sol);
+int is_feasible(const KnapsackInstance *instance, Solution *sol);
+Solution *create_solution(int item_count);
+void copy_solution(const KnapsackInstance *instance, const Solution *src, Solution *dest);
+void free_solution(Solution *sol);
 
 // Structure to hold item index and ratio, for sorting purposes
 typedef struct {
@@ -43,7 +52,7 @@ int* compute_and_sort_ratios(const KnapsackInstance *inst) {
 }
 
 // Computes solution penalty
-double compute_penalty(const KnapsackInstance *instance, Solution *sol) {
+int compute_penalty(const KnapsackInstance *instance, Solution *sol) {
     int total_penalty = 0;
 
     // Computes the penalty for each forfeit set
@@ -96,6 +105,44 @@ Solution* build_initial_solution(const KnapsackInstance *instance) {
 
     // Computes forfeit sets penalty
     sol->total_penalty = compute_penalty(instance, sol);
+    return sol;
+}
+
+// Builds a initial solution
+Solution* build_initial_solution_2(const KnapsackInstance *instance) {
+    Solution *sol = create_solution(instance->item_count);
+
+    // Initializes an array of indices
+    int *indices_arr = init_indeces_array(instance->item_count);
+    // Creates a permutation of the array of indices
+    shuffle(indices_arr, instance->item_count);
+
+    // Computes the maximum number of items in the initial solution
+    int upper_lim = (int) (instance->item_count * 0.7);
+    int lower_lim = (int) (instance->item_count * 0.1);
+    int num_items = lower_lim + rand() % (upper_lim - lower_lim + 1);
+
+    // Loops through items of indices_arr
+    for (int i = 0; i < num_items; i++) {
+        int item_idx = indices_arr[i];
+        int w = instance->items[item_idx].weight;
+        int v = 0;
+        int p = 0;
+        // Checks if solution is feasible
+        if (sol->total_weight + w <= instance->capacity) {
+            sol->included[item_idx] = 1;
+            // Computes solution value and penalty
+            v = sol->total_value + instance->items[item_idx].value;
+            p = compute_penalty(instance, sol);
+            // Checks if there is a increase in objective function value
+            if (v - p > sol->total_value - sol->total_penalty) {
+                // Includes item
+                sol->total_value = v;
+                sol->total_weight += w;
+                sol->total_penalty = p;
+            }
+        }
+    }
     return sol;
 }
 
@@ -172,9 +219,8 @@ void perturb_solution(const KnapsackInstance *instance, Solution *sol, Solution 
     }
 }
 
-Solution* acceptance_criterion(Solution *sol_star, Solution *sol) {
-    if (objective_value(sol_star) > objective_value(sol)) {
-        return sol_star;
+void acceptance_criterion(const KnapsackInstance *instance, Solution *sol_star, Solution *sol) {
+    if (objective_value(sol_star) < objective_value(sol)) {
+        copy_solution(instance, sol, sol_star);
     }
-    return sol;
 }

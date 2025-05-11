@@ -1,16 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Utility: shuffles an array
-void shuffle(int *array, int n) {
-    for (int i = n - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
-        int temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-}
-
 // Neighborhood: Adds item
 int try_add_item(const KnapsackInstance *instance, Solution *sol) {
     for (int i = 0; i < instance->item_count; i++) {
