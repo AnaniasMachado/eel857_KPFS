@@ -140,6 +140,8 @@ Solution* build_initial_solution_2(const KnapsackInstance *instance) {
                 sol->total_value = v;
                 sol->total_weight += w;
                 sol->total_penalty = p;
+            } else {
+                sol->included[item_idx] = 0;
             }
         }
     }
@@ -182,41 +184,14 @@ void free_solution(Solution *sol) {
     free(sol);
 }
 
-// Perturbs solution
-void perturb_solution(const KnapsackInstance *instance, Solution *sol, Solution *sol_prime) {
-    // Creates a copy of sol
-    copy_solution(instance, sol, sol_prime);
-
-    // Perturbs solution
-    int perturbation_size = 2; // Number of items to flip
-    for (int p = 0; p < perturbation_size; p++) {
-        int idx = rand() % instance->item_count;
-        // Flips inclusion
-        if (sol_prime->included[idx]) {
-            // Removes item
-            sol_prime->included[idx] = 0;
-
-            // Recomputes total weight and value
-            int new_weight = sol_prime->total_weight - instance->items[idx].weight;
-            int new_value = sol_prime->total_value - instance->items[idx].value;
-
-            // Recomputes penalties
-            int new_penalty = compute_penalty(instance, sol_prime);
-        } else {
-            // Adds item if feasible
-            int new_weight = sol_prime->total_weight + instance->items[idx].weight;
-            if (new_weight <= instance->capacity) {
-                sol_prime->included[idx] = 1;
-
-                // Recomputes total weight and value
-                int new_weight = sol_prime->total_weight + instance->items[idx].weight;
-                int new_value = sol_prime->total_value + instance->items[idx].value;
-
-                // Recomputes penalties
-                int new_penalty = compute_penalty(instance, sol_prime);
-            }
+// Checks if two solutions are the same
+int is_same_solution(const KnapsackInstance *instance, const Solution *sol1, const Solution *sol2) {
+    for (int i = 0; i < instance->item_count; ++i) {
+        if (sol1->included[i] != sol2->included[i]) {
+            return 0;
         }
     }
+    return 1;
 }
 
 void acceptance_criterion(const KnapsackInstance *instance, Solution *sol_star, Solution *sol) {
