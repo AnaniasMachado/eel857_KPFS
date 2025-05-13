@@ -3,29 +3,43 @@
 
 #include "../local_search/rvnd.c"
 #include "../perturbation/flip_perturbation.c"
+#include "../perturbation/hybrid_perturbation.c"
+#include "../perturbation/remove_perturbation.c"
+#include "../perturbation/add_perturbation.c"
+#include "../perturbation/xor_perturbation.c"
+#include "../perturbation/overhaul_perturbation.c"
 
 // Implementation of algorithm iterated local search
 Solution* iterated_local_search(KnapsackInstance *instance, int ls_max_iterations) {
-    // Builds a initial solution using a constructive algorithm
+    // Build a initial solution using a constructive algorithm
     Solution *init_sol = build_initial_solution_2(instance);
     printf("Initial solution objective value: %d\n", objective_value(init_sol));
     printf("Initial solution viability: %d\n", instance->capacity - init_sol->total_weight);
 
-    // Initializes auxilary variables
+    // Initialize auxilary variables
     Solution *sol_star = create_solution(instance->item_count);
     Solution *sol_prime = create_solution(instance->item_count);
     Solution *sol_star_prime = create_solution(instance->item_count);
     int prev_obj_val = objective_value(init_sol);
     int no_change = 0;
+    typedef void (*PerturbationFunc)(const KnapsackInstance *, const Solution *, Solution *);
+    PerturbationFunc perturbationfuncs[] = {flip_perturb_solution, hybrid_perturb_solution, remove_perturb_solution, add_perturb_solution, xor_perturb_solution};
+    int perturbationsfuncs_count = 5;
 
-    // Applies local search on initial solution
+    // Apply local search on initial solution
     rvnd_local_search(instance, init_sol, sol_star, ls_max_iterations);
 
     printf("Is same solution after ls? %d\n", is_same_solution(instance, init_sol, sol_star));
 
-    // Enhances solution until max_iterations
+    // Enhance solution until max_iterations
     while (1) {
-        flip_perturb_solution(instance, sol_star, sol_prime);
+        int idx = rand() % perturbationsfuncs_count;
+        void (*perturbationfunc)(const KnapsackInstance *, const Solution *, Solution *) = perturbationfuncs[idx];
+        if (no_change == 9) {
+            overhaul_perturb_solution(instance, sol_star, sol_prime);
+        } else {
+            perturbationfunc(instance, sol_star, sol_prime);
+        }
         printf("Is same solution after perturb? %d\n", is_same_solution(instance, sol_star, sol_prime));
         rvnd_local_search(instance, sol_prime, sol_star_prime, ls_max_iterations);
         printf("LS solution objective value: %d\n", objective_value(sol_star_prime));

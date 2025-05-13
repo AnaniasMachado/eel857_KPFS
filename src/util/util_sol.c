@@ -28,7 +28,7 @@ int compare_ratio(const void *a, const void *b) {
         return 0;
 }
 
-// Computes the ratio value/weight for each item and returns an array of indices sorted descendingly by ratio
+// Compute the ratio value/weight for each item and returns an array of indices sorted descendingly by ratio
 int* compute_and_sort_ratios(const KnapsackInstance *inst) {
     int n = inst->item_count;
     ItemRatio *ratios = malloc(n * sizeof(ItemRatio));
@@ -51,11 +51,11 @@ int* compute_and_sort_ratios(const KnapsackInstance *inst) {
     return sorted_indices;
 }
 
-// Computes solution penalty
+// Compute solution penalty
 int compute_penalty(const KnapsackInstance *instance, Solution *sol) {
     int total_penalty = 0;
 
-    // Computes the penalty for each forfeit set
+    // Compute the penalty for each forfeit set
     for (int i = 0; i < instance->forfeit_count; i++) {
         ForfeitSet *fset = &instance->forfeit_sets[i];
 
@@ -64,13 +64,13 @@ int compute_penalty(const KnapsackInstance *instance, Solution *sol) {
         // For each item in the forfeit set
         for (int j = 0; j < fset->size; j++) {
             int item_id = fset->items[j];
-            // Checks if item is in solution
+            // Check if item is in solution
             if (sol->included[item_id]) {
                 count_included++;
             }
         }
 
-        // Checks if exceed threshold
+        // Check if exceed threshold
         if (count_included > fset->threshold) {
             total_penalty += (count_included - fset->threshold) * fset->penalty;
         }
@@ -79,7 +79,7 @@ int compute_penalty(const KnapsackInstance *instance, Solution *sol) {
     return total_penalty;
 }
 
-// Builds a initial solution
+// Build a initial solution
 Solution* build_initial_solution(const KnapsackInstance *instance) {
     Solution *sol = malloc(sizeof(Solution));
     sol->included = malloc(instance->item_count * sizeof(int));
@@ -88,55 +88,55 @@ Solution* build_initial_solution(const KnapsackInstance *instance) {
     sol->total_penalty = 0;
     int* sorted_indices = compute_and_sort_ratios(instance);
 
-    // Loops through items of sorted_indices 
+    // Loop through items of sorted_indices 
     for (int i = 0; i < instance->item_count; i++) {
         int item_idx = sorted_indices[i];
         int w = instance->items[item_idx].weight;
         if (sol->total_weight + w <= instance->capacity) {
-            // Includes item
+            // Include item
             sol->included[item_idx] = 1;
             sol->total_value += instance->items[item_idx].value;
             sol->total_weight += w;
         } else {
-            // Does not includes item
+            // Do not include item
             sol->included[item_idx] = 0;
         }
     }
 
-    // Computes forfeit sets penalty
+    // Compute forfeit sets penalty
     sol->total_penalty = compute_penalty(instance, sol);
     return sol;
 }
 
-// Builds a initial solution
+// Build a initial solution
 Solution* build_initial_solution_2(const KnapsackInstance *instance) {
     Solution *sol = create_solution(instance->item_count);
 
-    // Initializes an array of indices
+    // Initialize an array of indices
     int *indices_arr = init_indeces_array(instance->item_count);
-    // Creates a permutation of the array of indices
+    // Create a permutation of the array of indices
     shuffle(indices_arr, instance->item_count);
 
-    // Computes the maximum number of items in the initial solution
+    // Compute the maximum number of items in the initial solution
     int upper_lim = (int) (instance->item_count * 0.7);
     int lower_lim = (int) (instance->item_count * 0.1);
     int num_items = lower_lim + rand() % (upper_lim - lower_lim + 1);
 
-    // Loops through items of indices_arr
+    // Loop through items of indices_arr
     for (int i = 0; i < num_items; i++) {
         int item_idx = indices_arr[i];
         int w = instance->items[item_idx].weight;
         int v = 0;
         int p = 0;
-        // Checks if solution is feasible
+        // Check if solution is feasible
         if (sol->total_weight + w <= instance->capacity) {
             sol->included[item_idx] = 1;
-            // Computes solution value and penalty
+            // Compute solution value and penalty
             v = sol->total_value + instance->items[item_idx].value;
             p = compute_penalty(instance, sol);
-            // Checks if there is a increase in objective function value
+            // Check if there is a increase in objective function value
             if (v - p > sol->total_value - sol->total_penalty) {
-                // Includes item
+                // Include item
                 sol->total_value = v;
                 sol->total_weight += w;
                 sol->total_penalty = p;
@@ -148,17 +148,17 @@ Solution* build_initial_solution_2(const KnapsackInstance *instance) {
     return sol;
 }
 
-// Returns objetive function value
+// Return objetive function value
 int objective_value(Solution *sol) {
     return sol->total_value - sol->total_penalty;
 }
 
-// Checks if solution is feasible
+// Check if solution is feasible
 int is_feasible(const KnapsackInstance *instance, Solution *sol) {
     return sol->total_weight <= instance->capacity;
 }
 
-// Creates an empty solution
+// Create an empty solution
 Solution *create_solution(int item_count) {
     Solution *sol = (Solution*) malloc(sizeof(Solution));
     sol->included = (int*) calloc(item_count, sizeof(int));
@@ -184,7 +184,7 @@ void free_solution(Solution *sol) {
     free(sol);
 }
 
-// Checks if two solutions are the same
+// Check if two solutions are the same
 int is_same_solution(const KnapsackInstance *instance, const Solution *sol1, const Solution *sol2) {
     for (int i = 0; i < instance->item_count; ++i) {
         if (sol1->included[i] != sol2->included[i]) {
@@ -194,6 +194,7 @@ int is_same_solution(const KnapsackInstance *instance, const Solution *sol1, con
     return 1;
 }
 
+// Acceptance criterion to choose a solution
 void acceptance_criterion(const KnapsackInstance *instance, Solution *sol_star, Solution *sol) {
     if (objective_value(sol_star) < objective_value(sol)) {
         copy_solution(instance, sol, sol_star);

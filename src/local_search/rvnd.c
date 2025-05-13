@@ -5,26 +5,26 @@
 int try_add_item(const KnapsackInstance *instance, Solution *sol) {
     for (int i = 0; i < instance->item_count; i++) {
         if (!sol->included[i]) {
-            // Tries adding item
+            // Try adding item
             sol->included[i] = 1;
 
-            // Updates total weight and value
+            // Update total weight and value
             int new_weight = sol->total_weight + instance->items[i].weight;
             if (new_weight <= instance->capacity) {
-                // Recomputes total value and penalties
+                // Recompute total value and penalties
                 int new_value = sol->total_value + instance->items[i].value;
-                // Recomputes penalties
+                // Recompute penalties
                 int new_penalty = compute_penalty(instance, sol);
-                // Accepts move
+                // Accept move
                 int new_obj = new_value - new_penalty;
                 if (new_obj > (sol->total_value - sol->total_penalty)) {
-                    // Updates solution
+                    // Update solution
                     sol->total_value = new_value;
                     sol->total_weight = new_weight;
                     sol->total_penalty = new_penalty;
                     return 1; // Improvement
                 } else {
-                    // Reverts addition
+                    // Revert addition
                     sol->included[i] = 0;
                 }
             } else {
@@ -40,21 +40,21 @@ int try_add_item(const KnapsackInstance *instance, Solution *sol) {
 int try_remove_item(const KnapsackInstance *instance, Solution *sol) {
     for (int i = 0; i < instance->item_count; i++) {
         if (sol->included[i]) {
-            // Tries removing item
+            // Try removing item
             sol->included[i] = 0;
 
-            // Recomputes total weight and value
+            // Recompute total weight and value
             int new_weight = sol->total_weight - instance->items[i].weight;
             int new_value = sol->total_value - instance->items[i].value;
 
-            // Recomputes penalties
+            // Recompute penalties
             int new_penalty = compute_penalty(instance, sol);
 
-            // Checks feasibility
+            // Check feasibility
             if (new_weight <= instance->capacity) {
                 double new_obj = new_value - new_penalty;
                 if (new_obj > (sol->total_value - sol->total_penalty)) {
-                    // Accepts removal
+                    // Accept removal
                     sol->total_value = new_value;
                     sol->total_weight = new_weight;
                     sol->total_penalty = new_penalty;
@@ -68,35 +68,35 @@ int try_remove_item(const KnapsackInstance *instance, Solution *sol) {
     return 0; // No improvement
 }
 
-// Swaps two items in the solution
+// Swap two items in the solution
 int try_swap(const KnapsackInstance *instance, Solution *sol) {
     for (int i = 0; i < instance->item_count; i++) {
         if (sol->included[i]) {
             for (int j = 0; j < instance->item_count; j++) {
                 if (!sol->included[j]) {
-                    // Tries swapping i with j
+                    // Try swapping i with j
                     sol->included[i] = 0;
                     sol->included[j] = 1;
 
                     // Check scapacity
                     int new_weight = sol->total_weight - instance->items[i].weight + instance->items[j].weight;
                     if (new_weight <= instance->capacity) {
-                        // Recomputes value
+                        // Recompute value
                         int new_value = sol->total_value - instance->items[i].value;
 
-                        // Recomputes penalties
+                        // Recompute penalties
                         int new_penalty = compute_penalty(instance, sol);
 
                         double new_obj = new_value - new_penalty;
                         if (new_obj > (sol->total_value - sol->total_penalty)) {
-                            // Accepts swap
+                            // Accept swap
                             sol->total_value = new_value;
                             sol->total_weight = new_weight;
                             sol->total_penalty = new_penalty;
                             return 1;
                         }
                     }
-                    // Reverts swap
+                    // Revert swap
                     sol->included[i] = 1;
                     sol->included[j] = 0;
                 }
@@ -138,7 +138,7 @@ void rvnd_local_search(const KnapsackInstance *instance, Solution *initial_sol, 
         }
         iterations++;
     }
-    // Copies the best solution back
+    // Copy the best solution back
     copy_solution(instance, current, sol_star_prime);
     free_solution(current);
 }

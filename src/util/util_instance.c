@@ -11,7 +11,7 @@ int loadInstance(const char *filename, KnapsackInstance *instance) {
 
     int nI, nS, kS;
 
-    // Reads first line: nI, nS, kS
+    // Read first line: nI, nS, kS
     if (fscanf(file, "%d %d %d", &nI, &nS, &kS) != 3) {
         fprintf(stderr, "Error: Could not read line 1.");
         fclose(file);
@@ -22,7 +22,7 @@ int loadInstance(const char *filename, KnapsackInstance *instance) {
     instance->forfeit_count = nS;
     instance->capacity = kS;
 
-    // Allocates memory for items
+    // Allocate memory for items
     instance->items = (Item *) malloc(nI * sizeof(Item));
     if (!instance->items) {
         fprintf(stderr, "Error: Could not allocate memory for items.");
@@ -30,7 +30,7 @@ int loadInstance(const char *filename, KnapsackInstance *instance) {
         return 1;
     }
 
-    // Reads value of items
+    // Read value of items
     double *values = (double *) malloc(nI * sizeof(double));
     if (fscanf(file, "%lf", &values[0]) != 1) {
         fprintf(stderr, "Error: (T1) Could not read items values.");
@@ -48,11 +48,11 @@ int loadInstance(const char *filename, KnapsackInstance *instance) {
                 return 1;
             }
         }
-        // Initializes item
+        // Initialize item
         instance->items[i].id = i;
     }
 
-    // Reads weight of items
+    // Read weight of items
     double *weights = (double *) malloc(nI * sizeof(double));
     if (fscanf(file, "%lf", &weights[0]) != 1) {
         fprintf(stderr, "Error: (T1) Could not read items weight.");
@@ -73,11 +73,11 @@ int loadInstance(const char *filename, KnapsackInstance *instance) {
                 return 1;
             }
         }
-        // Attributes weight to item
+        // Attribute weight to item
         instance->items[i].weight = weights[i];
     }
 
-    // Attributes value to items
+    // Attribute value to items
     for (int i = 0; i < nI; i++) {
         instance->items[i].value = values[i];
     }
@@ -85,7 +85,7 @@ int loadInstance(const char *filename, KnapsackInstance *instance) {
     free(values);
     free(weights);
 
-    // Allocates memory for forfeit sets
+    // Allocate memory for forfeit sets
     instance->forfeit_sets = (ForfeitSet *) malloc(nS * sizeof(ForfeitSet));
     if (!instance->forfeit_sets) {
         fprintf(stderr, "Error: Could not allocate memory for forfeit sets.");
@@ -94,7 +94,7 @@ int loadInstance(const char *filename, KnapsackInstance *instance) {
         return 1;
     }
 
-    // Reads forfeit sets data
+    // Read forfeit sets data
     for (int i = 0; i < nS; i++) {
         int nA, fC, nI_i;
 
@@ -110,7 +110,7 @@ int loadInstance(const char *filename, KnapsackInstance *instance) {
             return 1;
         }
 
-        // Allocates memory for items of forfeit set
+        // Allocate memory for items of forfeit set
         instance->forfeit_sets[i].items = (int *) malloc(nI_i * sizeof(int));
         if (!instance->forfeit_sets[i].items) {
             fprintf(stderr, "Error: Could not allocate memory for forfeit set %d", i);
@@ -127,7 +127,7 @@ int loadInstance(const char *filename, KnapsackInstance *instance) {
         instance->forfeit_sets[i].threshold = nA;
         instance->forfeit_sets[i].penalty = fC;
 
-        // Reads IDs of forfeit set items
+        // Read IDs of forfeit set items
         for (int j = 0; j < nI_i; j++) {
             if (fscanf(file, "%d", &instance->forfeit_sets[i].items[j]) != 1) {
                 fprintf(stderr, "Error: Could not read items of forfeit set %d", i);
