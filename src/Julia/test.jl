@@ -12,6 +12,6 @@ info_matrix(data.forfeit_matrix)
 
 x, v = gurobi_solver(data)
 
-println("Objective value: $(objetive_value(data, x, v))")
+println("Objective value: $(objective_value(data, x, v))")
 
 println("Is viable: $(is_viable(data, x))")

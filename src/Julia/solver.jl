@@ -24,10 +24,10 @@ function gurobi_solver(data::Instance, opt_tol::Float64=10^(-5), time_limit::Int
 
     optimize!(model)
 
-    status = termination_status(inst.model)
+    status = termination_status(model)
     if status == MOI.OPTIMAL
-        x_star = [value(x[i]) for i in 1:data.nI]
-        v_star = [value(v[i]) for i in 1:data.nS]
+        x_star = [Int(round(value(x[i]))) for i in 1:data.nI]
+        v_star = [Int(round(value(v[i]))) for i in 1:data.nS]
         return x_star, v_star
     else
         throw(ErrorException("Model was not optimized successfully. Status Code: $status"))
