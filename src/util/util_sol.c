@@ -195,8 +195,12 @@ int is_same_solution(const KnapsackInstance *instance, const Solution *sol1, con
 }
 
 // Acceptance criterion to choose a solution
-void acceptance_criterion(const KnapsackInstance *instance, Solution *sol_star, Solution *sol) {
+void acceptance_criterion(const KnapsackInstance *instance, Solution *sol_star, Solution *sol, int no_change, int no_change_limit) {
+    int threshold = (int) ((double) no_change / (double) (no_change_limit - 1));
+    int rand_num = rand() % no_change_limit;
     if (objective_value(sol_star) < objective_value(sol)) {
+        copy_solution(instance, sol, sol_star);
+    } else if (rand_num <= threshold) {
         copy_solution(instance, sol, sol_star);
     }
 }
