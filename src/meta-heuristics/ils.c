@@ -10,7 +10,7 @@
 #include "../perturbation/overhaul_perturbation.c"
 
 // Implementation of algorithm iterated local search
-Solution* iterated_local_search(KnapsackInstance *instance, int ls_max_iterations, int no_change_limit) {
+Solution* iterated_local_search(KnapsackInstance *instance, int max_iterations, int ls_max_iterations, int no_change_limit) {
     // Build a initial solution using a constructive algorithm
     Solution *init_sol = build_initial_solution_2(instance);
     printf("Initial solution objective value: %d\n", objective_value(init_sol));
@@ -34,7 +34,7 @@ Solution* iterated_local_search(KnapsackInstance *instance, int ls_max_iteration
     printf("Is same solution after ls? %d\n", is_same_solution(instance, init_sol, sol_star));
 
     // Enhance solution until max_iterations
-    while (1) {
+    for (int k = 0; k <= max_iterations; ++k) {
         int idx = rand() % perturbationsfuncs_count;
         void (*perturbationfunc)(const KnapsackInstance *, const Solution *, Solution *) = perturbationfuncs[idx];
         int threshold = (int) ((double) no_change / (double) (no_change_limit - 1));
@@ -71,4 +71,9 @@ Solution* iterated_local_search(KnapsackInstance *instance, int ls_max_iteration
         printf("Best solution viability: %d\n", instance->capacity - sol_star->total_weight);
         printf("No change value: %d\n", no_change);
     }
+    printf("Maximum number of iterations reached\n");
+    free_solution(sol_star_cur);
+    free_solution(sol_prime);
+    free_solution(sol_star_prime);
+    return sol_star;
 }
