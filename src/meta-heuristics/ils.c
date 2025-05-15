@@ -37,7 +37,7 @@ Solution* iterated_local_search(KnapsackInstance *instance, int max_iterations, 
     for (int k = 0; k <= max_iterations; ++k) {
         int idx = rand() % perturbationsfuncs_count;
         void (*perturbationfunc)(const KnapsackInstance *, const Solution *, Solution *) = perturbationfuncs[idx];
-        int threshold = (int) ((double) no_change / (double) (no_change_limit - 1));
+        int threshold = (int) (no_change * 0.25);
         int rand_num = rand() % no_change_limit;
         if (rand_num <= threshold) {
             overhaul_perturb_solution(instance, sol_star_cur, sol_prime);
