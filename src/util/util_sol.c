@@ -195,12 +195,22 @@ int is_same_solution(const KnapsackInstance *instance, const Solution *sol1, con
 }
 
 // Acceptance criterion to choose a solution
-void acceptance_criterion(const KnapsackInstance *instance, Solution *sol_star, Solution *sol, int no_change, int no_change_limit) {
-    int threshold = (int) (no_change * 0.25);
-    int rand_num = rand() % no_change_limit;
+void acceptance_criterion(const KnapsackInstance *instance, Solution *sol_star, Solution *sol, int k, int max_iterations, int no_change, int no_change_limit) {
+    // Compute no_change and iteration factors
+    double no_change_factor = (double) no_change / no_change_limit; // between 0 and 1
+    double iter_factor = (double) (max_iterations - k) / max_iterations; // between 0 and 1
+    
+    // Compute a probability from factors
+    double prob = no_change_factor * iter_factor;
+
+    // Random number between 0 and 1
+    double rand_num = (double) rand() / RAND_MAX;
+
     if (objective_value(sol_star) < objective_value(sol)) {
+        // Accept better solution
         copy_solution(instance, sol, sol_star);
-    } else if (rand_num <= threshold) {
+    } else if (rand_num <= prob) {
+        // Accept worse solution with a given probability
         copy_solution(instance, sol, sol_star);
     }
 }

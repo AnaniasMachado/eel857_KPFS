@@ -3,7 +3,7 @@
 
 #include "types/item.h"
 #include "types/forfeit_set.h"
-#include "types/knacksack_instance.h"
+#include "types/knapsack_instance.h"
 #include "types/solution.h"
 #include "util/util_instance.c"
 

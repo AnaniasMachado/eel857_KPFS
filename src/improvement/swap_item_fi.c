@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Swap two items in the solution with first improvement
-int try_swap_fi(const KnapsackInstance *instance, Solution *sol) {
+// Improvement: Swap two items in the solution with first improvement
+int try_swap_item_fi(const KnapsackInstance *instance, Solution *sol) {
     // Initialize an array of indices
     int *indices_arr = init_indeces_array(instance->item_count);
     // Create a permutation of the array of indices

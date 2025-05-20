@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Neighborhood: Remove item with first improvement
+// Improvement: Remove item with first improvement
 int try_remove_item_fi(const KnapsackInstance *instance, Solution *sol) {
     // Initialize an array of indices
     int *indices_arr = init_indeces_array(instance->item_count);
