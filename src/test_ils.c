@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #include "types/item.h"
 #include "types/forfeit_set.h"
@@ -22,6 +23,8 @@ int main() {
 
         int max_iterations = 100;
         int no_change_limit = 10;
+        char type_improvement[3];
+        strcpy(type_improvement, "fi");
         srand(time(NULL));
 
         struct timespec start, end;
@@ -29,7 +32,7 @@ int main() {
 
         clock_gettime(CLOCK_MONOTONIC, &start);
 
-        Solution* sol = iterated_local_search(&instance, max_iterations, no_change_limit);
+        Solution* sol = iterated_local_search(&instance, max_iterations, no_change_limit, type_improvement);
 
         clock_gettime(CLOCK_MONOTONIC, &end);
         elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;

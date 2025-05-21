@@ -10,7 +10,7 @@
 #include "../perturbation/overhaul_perturbation.c"
 
 // Implementation of algorithm iterated local search
-Solution* iterated_local_search(KnapsackInstance *instance, int max_iterations, int no_change_limit) {
+Solution* iterated_local_search(KnapsackInstance *instance, int max_iterations, int no_change_limit, char *type_improvement) {
     // Build a initial solution using a constructive algorithm
     Solution *init_sol = build_initial_solution_2(instance);
     printf("Initial solution objective value: %d\n", objective_value(init_sol));
@@ -28,7 +28,7 @@ Solution* iterated_local_search(KnapsackInstance *instance, int max_iterations, 
     int perturbationsfuncs_count = 5;
 
     // Apply local search on initial solution
-    rvnd_local_search_fi(instance, init_sol, sol_star);
+    rvnd_local_search(instance, init_sol, sol_star, type_improvement);
     copy_solution(instance, sol_star, sol_star_cur);
 
     printf("Is same solution after ls? %d\n", is_same_solution(instance, init_sol, sol_star));
@@ -39,7 +39,7 @@ Solution* iterated_local_search(KnapsackInstance *instance, int max_iterations, 
         void (*perturbationfunc)(const KnapsackInstance *, const Solution *, Solution *) = perturbationfuncs[idx];
         perturbationfunc(instance, sol_star_cur, sol_prime);
         printf("Is same solution after perturb? %d\n", is_same_solution(instance, sol_star_cur, sol_prime));
-        rvnd_local_search_fi(instance, sol_prime, sol_star_prime);
+        rvnd_local_search(instance, sol_prime, sol_star_prime, type_improvement);
         printf("LS solution objective value: %d\n", objective_value(sol_star_prime));
         printf("LS solution viability: %d\n", instance->capacity - sol_star_prime->total_weight);
         printf("Is same solution after ls? %d\n", is_same_solution(instance, sol_prime, sol_star_prime));

@@ -6,9 +6,9 @@
 #include "swap_item_ls.c"
 
 // RVND algorithm
-void rvnd_local_search_fi(const KnapsackInstance *instance, Solution *initial_sol, Solution *sol_star_prime) {
+void rvnd_local_search(const KnapsackInstance *instance, Solution *initial_sol, Solution *sol_star_prime, char *type_improvement) {
     // List of neighborhoods
-    typedef int (*NeighborhoodFunc)(const KnapsackInstance *, Solution *);
+    typedef int (*NeighborhoodFunc)(const KnapsackInstance *, Solution *, char *);
     NeighborhoodFunc neighborhoods[] = {add_item_ls, remove_item_ls, swap_item_ls};
     int neighborhood_count = 3;
 
@@ -23,9 +23,9 @@ void rvnd_local_search_fi(const KnapsackInstance *instance, Solution *initial_so
         int improved = 0;
         for (int n_idx = 0; n_idx < neighborhood_count; n_idx++) {
             int n = neighborhood_indices[n_idx];
-            int (*neighborhood)(const KnapsackInstance *, Solution *) = neighborhoods[n];
+            int (*neighborhood)(const KnapsackInstance *, Solution *, char *) = neighborhoods[n];
 
-            if (neighborhood(instance, current)) {
+            if (neighborhood(instance, current, type_improvement)) {
                 // If improved, restart loop
                 improved = 1;
                 break;
