@@ -89,7 +89,7 @@ function vector_norm_0(x::Vector{Int})
     return norm_0
 end
 
-function objective_value(data::Instance, x::Vector{Int}, v::Vector{Int})
+function eval_objective_value(data::Instance, x::Vector{Int}, v::Vector{Int})
     return data.values' * x - data.d' * v
 end
 

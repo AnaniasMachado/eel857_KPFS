@@ -10,8 +10,12 @@ data = read_instance(path)
 
 info_matrix(data.forfeit_matrix)
 
-x, v = gurobi_solver(data)
+time = @elapsed begin
+    x, v = gurobi_solver(data)
+end
 
-println("Objective value: $(objective_value(data, x, v))")
+println("Objective value: $(eval_objective_value(data, x, v))")
 
 println("Is viable: $(is_viable(data, x))")
+
+println("Time: $(time)")
