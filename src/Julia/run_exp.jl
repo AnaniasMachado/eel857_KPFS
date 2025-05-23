@@ -4,9 +4,14 @@ using Base.GC
 include("util.jl")
 include("solver.jl")
 
-scenarios = [1, 2, 3, 4]
-types = ["correlated_sc", "fully_correlated_sc", "not_correlated_sc"]
+# scenarios = [1, 2, 3, 4]
+scenarios = [2, 4]
+# types = ["correlated_sc", "fully_correlated_sc", "not_correlated_sc"]
+types = ["not_correlated_sc"]
 sizes = [300, 500, 700, 800, 1000]
+
+opt_tol = 10^(-5)
+time_limit = 21600 # 6 hours
 
 for scenario in scenarios
     for type in types
@@ -16,11 +21,13 @@ for scenario in scenarios
             for idx in 1:10
                 inst_file = "kpfs_$(idx).txt"
                 path = joinpath(instances_folder, inst_file)
+                println("Solving: $(path)")
                 data = read_instance(path)
                 time = @elapsed begin
-                    x, v = gurobi_solver(data)
+                    x, v = gurobi_solver(data, opt_tol, time_limit)
                 end
-                solution_filename = "grb_sol_kpfs_idx_$(idx)"
+                println("Time: $(time)")
+                solution_filename = "grb_sol_kpfs_$(idx)"
                 solution_filepath = joinpath(solutions_folder, solution_filename)
                 matwrite(solution_filepath, Dict("x" => x, "v" => v, "time" => time))
                 GC.gc()
