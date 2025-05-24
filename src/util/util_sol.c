@@ -9,6 +9,8 @@ int is_feasible(const KnapsackInstance *instance, Solution *sol);
 Solution *create_solution(int item_count);
 void copy_solution(const KnapsackInstance *instance, const Solution *src, Solution *dest);
 void free_solution(Solution *sol);
+void add_item(Solution *sol, int idx);
+void remove_item(Solution *sol, int idx);
 
 // Structure to hold item index and ratio, for sorting purposes
 typedef struct {
@@ -81,11 +83,7 @@ int compute_penalty(const KnapsackInstance *instance, Solution *sol) {
 
 // Build a initial solution
 Solution* build_initial_solution(const KnapsackInstance *instance) {
-    Solution *sol = malloc(sizeof(Solution));
-    sol->included = malloc(instance->item_count * sizeof(int));
-    sol->total_value = 0;
-    sol->total_weight = 0;
-    sol->total_penalty = 0;
+    Solution *sol = create_solution(instance->item_count);
     int* sorted_indices = compute_and_sort_ratios(instance);
 
     // Loop through items of sorted_indices 
@@ -94,12 +92,12 @@ Solution* build_initial_solution(const KnapsackInstance *instance) {
         int w = instance->items[item_idx].weight;
         if (sol->total_weight + w <= instance->capacity) {
             // Include item
-            sol->included[item_idx] = 1;
+            add_item(sol, item_idx);
             sol->total_value += instance->items[item_idx].value;
             sol->total_weight += w;
         } else {
             // Do not include item
-            sol->included[item_idx] = 0;
+            remove_item(sol, item_idx);
         }
     }
 
@@ -130,7 +128,7 @@ Solution* build_initial_solution_2(const KnapsackInstance *instance) {
         int p = 0;
         // Check if solution is feasible
         if (sol->total_weight + w <= instance->capacity) {
-            sol->included[item_idx] = 1;
+            add_item(sol, item_idx);
             // Compute solution value and penalty
             v = sol->total_value + instance->items[item_idx].value;
             p = compute_penalty(instance, sol);
@@ -141,7 +139,7 @@ Solution* build_initial_solution_2(const KnapsackInstance *instance) {
                 sol->total_weight += w;
                 sol->total_penalty = p;
             } else {
-                sol->included[item_idx] = 0;
+                remove_item(sol, item_idx);
             }
         }
     }
@@ -165,6 +163,13 @@ Solution *create_solution(int item_count) {
     sol->total_value = 0;
     sol->total_weight = 0;
     sol->total_penalty = 0;
+    sol->included_items = (int*) calloc(item_count, sizeof(int));
+    sol->size_included = 0;
+    sol->not_included_items = (int*) malloc(item_count * sizeof(int));
+    for (int i = 0; i < item_count; i++) {
+        sol->not_included_items[i] = i;
+    }
+    sol->size_not_included = item_count;
     return sol;
 }
 
@@ -192,6 +197,30 @@ int is_same_solution(const KnapsackInstance *instance, const Solution *sol1, con
         }
     }
     return 1;
+}
+
+// Add item to solution list of included items
+void add_item(Solution *sol, int idx) {
+    // Include item
+    sol->included[idx] = 1;
+    // Add item in list of included items
+    sol->included_items[sol->size_included] = idx;
+    sol->size_included += 1;
+    // Remove item from list of not included items
+    sol->not_included_items[idx] = sol->not_included_items[sol->size_not_included];
+    sol->size_not_included -= 1;
+}
+
+// Remove item from solution list of included items
+void remove_item(Solution *sol, int idx) {
+    // Remove item
+    sol->included[idx] = 0;
+    // Add item in list of not included items
+    sol->not_included_items[sol->size_not_included] = idx;
+    sol->size_not_included += 1;
+    // Remove item from list of included items
+    sol->included_items[idx] = sol->included_items[sol->size_included];
+    sol->size_included -= 1;
 }
 
 // Acceptance criterion to choose a solution
