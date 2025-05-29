@@ -8,9 +8,8 @@ include("solver.jl")
 # scenarios = [2, 4]
 scenarios = [4]
 # types = ["correlated_sc", "fully_correlated_sc", "not_correlated_sc"]
-types = ["not_correlated_sc"]
-# sizes = [300, 500, 700, 800, 1000]
-sizes = [1000]
+types = ["correlated_sc"]
+sizes = [300, 500, 700, 800, 1000]
 
 opt_tol = 10^(-5)
 time_limit = 21600 # 6 hours
@@ -20,8 +19,7 @@ for scenario in scenarios
         for size in sizes
             instances_folder = "../../instances/scenario$(scenario)/$(type)$(scenario)/$(size)/"
             solutions_folder = "../../solutions/Gurobi/scenario$(scenario)/$(type)$(scenario)/$(size)/"
-            # for idx in 1:10
-            for idx in 7:10
+            for idx in 1:10
                 inst_file = "kpfs_$(idx).txt"
                 path = joinpath(instances_folder, inst_file)
                 println("Solving: $(path)")
