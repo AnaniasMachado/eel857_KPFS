@@ -9,7 +9,8 @@ include("solver.jl")
 scenarios = [4]
 # types = ["correlated_sc", "fully_correlated_sc", "not_correlated_sc"]
 types = ["correlated_sc"]
-sizes = [300, 500, 700, 800, 1000]
+# sizes = [300, 500, 700, 800, 1000]
+sizes = [500, 700, 800, 1000]
 
 opt_tol = 10^(-5)
 time_limit = 21600 # 6 hours
@@ -24,13 +25,13 @@ for scenario in scenarios
                 path = joinpath(instances_folder, inst_file)
                 println("Solving: $(path)")
                 data = read_instance(path)
-                time = @elapsed begin
-                    x, v = gurobi_solver(data, opt_tol, time_limit)
+                elapsed_time = @elapsed begin
+                    x, v, gap = gurobi_solver(data, opt_tol, time_limit)
                 end
-                println("Time: $(time)")
+                println("Time: $(elapsed_time)")
                 solution_filename = "grb_sol_kpfs_$(idx)"
                 solution_filepath = joinpath(solutions_folder, solution_filename)
-                matwrite(solution_filepath, Dict("x" => x, "v" => v, "time" => time))
+                matwrite(solution_filepath, Dict("x" => x, "v" => v, "time" => elapsed_time, "gap" => gap))
                 GC.gc()
             end
         end

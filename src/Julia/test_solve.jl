@@ -10,12 +10,14 @@ data = read_instance(path)
 
 info_matrix(data.forfeit_matrix)
 
-time = @elapsed begin
-    x, v = gurobi_solver(data)
+elapsed_time = @elapsed begin
+    x, v, duality_gap = gurobi_solver(data)
 end
 
 println("Objective value: $(eval_objective_value(data, x, v))")
 
 println("Is viable: $(is_viable(data, x))")
 
-println("Time: $(time)")
+println("Duality gap: $(duality_gap)")
+
+println("Time: $(elapsed_time)")
