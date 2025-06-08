@@ -10,7 +10,7 @@ scenarios = [4]
 # types = ["correlated_sc", "fully_correlated_sc", "not_correlated_sc"]
 types = ["correlated_sc"]
 # sizes = [300, 500, 700, 800, 1000]
-sizes = [500, 700, 800, 1000]
+sizes = [800, 1000]
 
 opt_tol = 10^(-5)
 time_limit = 21600 # 6 hours
@@ -20,19 +20,21 @@ for scenario in scenarios
         for size in sizes
             instances_folder = "../../instances/scenario$(scenario)/$(type)$(scenario)/$(size)/"
             solutions_folder = "../../solutions/Gurobi/scenario$(scenario)/$(type)$(scenario)/$(size)/"
-            for idx in 1:10
-                inst_file = "kpfs_$(idx).txt"
-                path = joinpath(instances_folder, inst_file)
-                println("Solving: $(path)")
-                data = read_instance(path)
-                elapsed_time = @elapsed begin
-                    x, v, gap = gurobi_solver(data, opt_tol, time_limit)
+            if size == 1000
+                for idx in 5:10
+                    inst_file = "kpfs_$(idx).txt"
+                    path = joinpath(instances_folder, inst_file)
+                    println("Solving: $(path)")
+                    data = read_instance(path)
+                    elapsed_time = @elapsed begin
+                        x, v, gap = gurobi_solver(data, opt_tol, time_limit)
+                    end
+                    println("Time: $(elapsed_time)")
+                    solution_filename = "grb_sol_kpfs_$(idx)"
+                    solution_filepath = joinpath(solutions_folder, solution_filename)
+                    matwrite(solution_filepath, Dict("x" => x, "v" => v, "time" => elapsed_time, "gap" => gap))
+                    GC.gc()
                 end
-                println("Time: $(elapsed_time)")
-                solution_filename = "grb_sol_kpfs_$(idx)"
-                solution_filepath = joinpath(solutions_folder, solution_filename)
-                matwrite(solution_filepath, Dict("x" => x, "v" => v, "time" => elapsed_time, "gap" => gap))
-                GC.gc()
             end
         end
     end

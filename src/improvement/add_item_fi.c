@@ -4,7 +4,7 @@
 // Improvement: Add item with first improvement
 int try_add_item_fi(const KnapsackInstance *instance, Solution *sol) {
     // Initialize an array of indices
-    int *indices_arr = init_indeces_array(instance->item_count);
+    int *indices_arr = init_indices_array(instance->item_count);
     // Create a permutation of the array of indices
     shuffle(indices_arr, instance->item_count);
 

@@ -30,16 +30,39 @@ int main() {
         struct timespec start, end;
         double elapsed;
 
-        clock_gettime(CLOCK_MONOTONIC, &start);
+        int total_obj_val = 0;
+        double total_elapsed = 0.0;
 
-        Solution* sol = iterated_local_search(&instance, max_iterations, no_change_limit, type_improvement);
+        double mean_obj_val = 0.0;
+        double mean_elapsed_time = 0.0;
 
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+        for (int i = 0; i < 10; i++) {
+            printf("Iteration: %i\n", i);
+            printf("Point 0\n");
+            clock_gettime(CLOCK_MONOTONIC, &start);
+            printf("Point 14\n");
+            Solution* sol = iterated_local_search(&instance, max_iterations, no_change_limit, type_improvement);
+            printf("Point 15\n");
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            printf("Point 1\n");
+            elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+            printf("Point 2\n");
+            total_obj_val += objective_value(sol);
+            printf("Point 3\n");
+            total_elapsed += elapsed;
+            free_solution(sol);
+            printf("Point 4\n");
+        }
 
-        printf("Solution objective value: %d\n", objective_value(sol));
-        printf("Viability: %d\n", instance.capacity - sol->total_weight);
-        printf("Time: %.9f\n", elapsed);
+        mean_obj_val = total_obj_val / 10;
+        mean_elapsed_time = total_elapsed / 10;
+
+        // printf("Solution objective value: %d\n", objective_value(sol));
+        // printf("Viability: %d\n", instance.capacity - sol->total_weight);
+        // printf("Time: %.9f\n", elapsed);
+
+        printf("Mean solution objective value: %f\n", mean_obj_val);
+        printf("Mean time: %.3f\n", mean_elapsed_time);
 
         // Free memory
         freeInstance(&instance);

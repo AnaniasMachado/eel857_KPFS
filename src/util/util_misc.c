@@ -12,9 +12,9 @@ void shuffle(int *array, int n) {
 }
 
 // Initialize an array of indeces
-int* init_indeces_array(int n) {
+int* init_indices_array(int n) {
     int *array = malloc(n * sizeof(int));
-    for (int i = 1; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         array[i] = i;
     }
     return array;

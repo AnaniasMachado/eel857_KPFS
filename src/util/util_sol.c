@@ -101,6 +101,8 @@ Solution* build_initial_solution(const KnapsackInstance *instance) {
         }
     }
 
+    free(sorted_indices);
+
     // Compute forfeit sets penalty
     sol->total_penalty = compute_penalty(instance, sol);
     return sol;
@@ -111,7 +113,7 @@ Solution* build_initial_solution_2(const KnapsackInstance *instance) {
     Solution *sol = create_solution(instance->item_count);
 
     // Initialize an array of indices
-    int *indices_arr = init_indeces_array(instance->item_count);
+    int *indices_arr = init_indices_array(instance->item_count);
     // Create a permutation of the array of indices
     shuffle(indices_arr, instance->item_count);
 
@@ -143,6 +145,7 @@ Solution* build_initial_solution_2(const KnapsackInstance *instance) {
             }
         }
     }
+    free(indices_arr);
     return sol;
 }
 
@@ -186,6 +189,8 @@ void copy_solution(const KnapsackInstance *instance, const Solution *src, Soluti
 // Free solution memory
 void free_solution(Solution *sol) {
     free(sol->included);
+    free(sol->included_items);
+    free(sol->not_included_items);
     free(sol);
 }
 
@@ -223,23 +228,31 @@ void remove_item(Solution *sol, int idx) {
     sol->size_included -= 1;
 }
 
+// // Acceptance criterion to choose a solution
+// void acceptance_criterion(const KnapsackInstance *instance, Solution *sol_star, Solution *sol, int k, int max_iterations, int no_change, int no_change_limit) {
+//     // Compute no_change and iteration factors
+//     double no_change_factor = (double) no_change / no_change_limit; // between 0 and 1
+//     double iter_factor = (double) (max_iterations - k) / max_iterations; // between 0 and 1
+    
+//     // Compute a probability from factors
+//     double prob = no_change_factor * iter_factor;
+
+//     // Random number between 0 and 1
+//     double rand_num = (double) rand() / RAND_MAX;
+
+//     if (objective_value(sol_star) < objective_value(sol)) {
+//         // Accept better solution
+//         copy_solution(instance, sol, sol_star);
+//     } else if (rand_num <= prob) {
+//         // Accept worse solution with a given probability
+//         copy_solution(instance, sol, sol_star);
+//     }
+// }
+
 // Acceptance criterion to choose a solution
 void acceptance_criterion(const KnapsackInstance *instance, Solution *sol_star, Solution *sol, int k, int max_iterations, int no_change, int no_change_limit) {
-    // Compute no_change and iteration factors
-    double no_change_factor = (double) no_change / no_change_limit; // between 0 and 1
-    double iter_factor = (double) (max_iterations - k) / max_iterations; // between 0 and 1
-    
-    // Compute a probability from factors
-    double prob = no_change_factor * iter_factor;
-
-    // Random number between 0 and 1
-    double rand_num = (double) rand() / RAND_MAX;
-
     if (objective_value(sol_star) < objective_value(sol)) {
         // Accept better solution
-        copy_solution(instance, sol, sol_star);
-    } else if (rand_num <= prob) {
-        // Accept worse solution with a given probability
         copy_solution(instance, sol, sol_star);
     }
 }
