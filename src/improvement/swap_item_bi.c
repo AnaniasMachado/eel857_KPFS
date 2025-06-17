@@ -14,8 +14,10 @@ int try_swap_item_bi(const KnapsackInstance *instance, Solution *sol) {
             for (int j = 0; j < instance->item_count; j++) {
                 if (!sol->included[j]) {
                     // Try swapping i with j
-                    sol->included[i] = 0;
-                    sol->included[j] = 1;
+                    // sol->included[i] = 0;
+                    // sol->included[j] = 1;
+                    remove_item(sol, i);
+                    add_item(sol, j);
 
                     // Check scapacity
                     int new_weight = sol->total_weight - instance->items[i].weight + instance->items[j].weight;
@@ -36,8 +38,10 @@ int try_swap_item_bi(const KnapsackInstance *instance, Solution *sol) {
                         }
                     }
                     // Revert swap
-                    sol->included[i] = 1;
-                    sol->included[j] = 0;
+                    // sol->included[i] = 1;
+                    // sol->included[j] = 0;
+                    add_item(sol, i);
+                    remove_item(sol, j);
                 }
             }
         }
@@ -46,8 +50,10 @@ int try_swap_item_bi(const KnapsackInstance *instance, Solution *sol) {
     // After checking all options, do the best move
     if (best_idx_i != -1) {
         // Update solution with best move
-        sol->included[best_idx_i] = 0;
-        sol->included[best_idx_j] = 1;
+        // sol->included[best_idx_i] = 0;
+        // sol->included[best_idx_j] = 1;
+        remove_item(sol, best_idx_i);
+        add_item(sol, best_idx_j);
         sol->total_weight = sol->total_weight - instance->items[best_idx_i].weight + instance->items[best_idx_j].weight;
         sol->total_value = sol->total_value - instance->items[best_idx_i].value + instance->items[best_idx_j].value;
         sol->total_penalty = compute_penalty(instance, sol);

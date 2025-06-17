@@ -142,6 +142,41 @@ int loadInstance(const char *filename, KnapsackInstance *instance) {
         }
     }
 
+    // // Allocate forfeit set size array
+    // instance->forfeit_sizes = (int *) malloc(nS * sizeof(int));
+    // if (!instance->forfeit_sizes) {
+    //     fprintf(stderr, "Error: Could not create forfeit sizes array.\n");
+    // }
+
+    // // Allocate forfeit set matrix
+    // instance->F = (int **) malloc(nS * sizeof(int *));
+    // for (int i = 0; i < nS; i++) {
+    //     instance->F[i] = (int *) calloc(nI, sizeof(int));
+    //     if (!instance->F[i]) {
+    //         fprintf(stderr, "Error: Could not create forfeit matrix row %d\n", i);
+    //     }
+    // }
+
+    // // Read forfeit sets
+    // for (int i = 0; i < nS; i++) {
+    //     int nA, fC, nI_i;
+    //     if (fscanf(file, "%d %d %d", &nA, &fC, &nI_i) != 3) {
+    //         fprintf(stderr, "Error: Could not read items of forfeit set %d\n", i);
+    //     }
+    //     instance->forfeit_sizes[i] = nI_i;
+    //     instance->thresholds[i] = nA;
+    //     instance->penalties[i] = fC;
+    //     for (int j = 0; j < nI_i; j++) {
+    //         int item_id;
+    //         if (fscanf(file, "%d", &item_id) != 1) {
+    //             fprintf(stderr, "Error: Could not read an item of forfeit set %d\n", i);
+    //         }
+    //         if (item_id >= 0 && item_id < nI) {
+    //             instance->F[i][item_id] = 1;
+    //         }
+    //     }
+    // }
+
     fclose(file);
     return 0;
 }
@@ -160,3 +195,14 @@ void freeInstance(KnapsackInstance *instance) {
         free(instance->forfeit_sets);
     }
 }
+
+// void freeInstance(KnapsackInstance *instance) {
+//     if (instance->items) {
+//         free(instance->items);
+//     }
+//     for (int i = 0; i < instance->forfeit_count; i++) {
+//         free(instance->F[i]);
+//     }
+//     free(instance->F);
+//     free(instance->forfeit_sizes);
+// }

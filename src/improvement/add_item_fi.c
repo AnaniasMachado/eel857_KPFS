@@ -13,7 +13,8 @@ int try_add_item_fi(const KnapsackInstance *instance, Solution *sol) {
         int idx = indices_arr[i];
         if (!sol->included[idx]) {
             // Try adding item
-            sol->included[idx] = 1;
+            // sol->included[idx] = 1;
+            add_item(sol, idx);
 
             // Update total weight and value
             int new_weight = sol->total_weight + instance->items[idx].weight;
@@ -33,11 +34,13 @@ int try_add_item_fi(const KnapsackInstance *instance, Solution *sol) {
                     return 1; // Improvement
                 } else {
                     // Revert addition
-                    sol->included[idx] = 0;
+                    // sol->included[idx] = 0;
+                    remove_item(sol, idx);
                 }
             } else {
                 // Capacity exceeded, revert
-                sol->included[idx] = 0;
+                // sol->included[idx] = 0;
+                remove_item(sol, idx);
             }
         }
     }

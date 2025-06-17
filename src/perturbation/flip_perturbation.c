@@ -15,7 +15,8 @@ void flip_perturb_solution(const KnapsackInstance *instance, const Solution *sol
         // Flip inclusion
         if (sol_prime->included[idx]) {
             // Remove item
-            sol_prime->included[idx] = 0;
+            // sol_prime->included[idx] = 0;
+            remove_item(sol_prime, idx);
 
             // Recompute total weight and value
             sol_prime->total_weight -= instance->items[idx].weight;
@@ -27,7 +28,8 @@ void flip_perturb_solution(const KnapsackInstance *instance, const Solution *sol
             // Add item if feasible
             int new_weight = sol_prime->total_weight + instance->items[idx].weight;
             if (new_weight <= instance->capacity) {
-                sol_prime->included[idx] = 1;
+                // sol_prime->included[idx] = 1;
+                add_item(sol_prime, idx);
 
                 // Recompute total weight and value
                 sol_prime->total_weight += instance->items[idx].weight;

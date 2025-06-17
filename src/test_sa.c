@@ -21,14 +21,14 @@ int main() {
         printf("Capacity: %d\n", instance.capacity);
         printf("Number of forfeit sets: %d\n", instance.forfeit_count);
 
-        int max_iterations = 200;
-        double T = 0.0002;
-        double t_0 = 25000000;
-        double alpha = 0.99;
-        int no_change_limit = 10;
+        int max_iterations = 400; // Last changed, best obj sol found: 655
+        double T = 0.001;
+        double t_0 = 25000;
+        double alpha = 0.95;
         char type_improvement[3];
         strcpy(type_improvement, "fi");
         srand(time(NULL));
+        int N = 10;
 
         struct timespec start, end;
         double elapsed;
@@ -39,7 +39,7 @@ int main() {
         double mean_obj_val = 0.0;
         double mean_elapsed_time = 0.0;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < N; i++) {
             printf("Iteration: %i\n", i);
             printf("Point 0\n");
             clock_gettime(CLOCK_MONOTONIC, &start);
@@ -57,8 +57,8 @@ int main() {
             printf("Point 6\n");
         }
 
-        mean_obj_val = total_obj_val / 10;
-        mean_elapsed_time = total_elapsed / 10;
+        mean_obj_val = total_obj_val / N;
+        mean_elapsed_time = total_elapsed / N;
 
         // printf("Solution objective value: %d\n", objective_value(sol));
         // printf("Viability: %d\n", instance.capacity - sol->total_weight);

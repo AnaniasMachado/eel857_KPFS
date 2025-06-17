@@ -29,7 +29,7 @@ function gurobi_solver(data::Instance, opt_tol::Float64=10^(-5), time_limit::Int
     optimize!(model)
 
     status = termination_status(model)
-    if (status == MOI.OPTIMAL) || (status == MOI.MEMORY_LIMIT)
+    if (status == MOI.OPTIMAL) || (status == MOI.MEMORY_LIMIT) || (status == MOI.TIME_LIMIT)
         x_star = [Int(round(value(x[i]))) for i in 1:data.nI]
         v_star = [Int(round(value(v[i]))) for i in 1:data.nS]
         obj_bound = MOI.get(model, MOI.ObjectiveBound())

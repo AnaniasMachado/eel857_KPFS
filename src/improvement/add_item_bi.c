@@ -11,7 +11,8 @@ int try_add_item_bi(const KnapsackInstance *instance, Solution *sol) {
     for (int i = 0; i < instance->item_count; i++) {
         if (!sol->included[i]) {
             // Try adding item
-            sol->included[i] = 1;
+            // sol->included[i] = 1;
+            add_item(sol, i);
 
             // Update total weight and value
             int new_weight = sol->total_weight + instance->items[i].weight;
@@ -29,14 +30,16 @@ int try_add_item_bi(const KnapsackInstance *instance, Solution *sol) {
                 }
             }
             // Revert addition
-            sol->included[i] = 0;
+            // sol->included[i] = 0;
+            remove_item(sol, i);
         }
     }
 
     // After checking all options, do the best move
     if (best_idx != -1) {
         // Update solution with best move
-        sol->included[best_idx] = 1;
+        // sol->included[best_idx] = 1;
+        add_item(sol, best_idx);
         sol->total_weight += instance->items[best_idx].weight;
         sol->total_value += instance->items[best_idx].value;
         sol->total_penalty = compute_penalty(instance, sol);

@@ -16,7 +16,8 @@ void xor_perturb_solution(const KnapsackInstance *instance, const Solution *sol,
             // Try to include item in final solution
             if (sol_prime->total_weight + instance->items[i].weight <= instance->capacity) {
                 if (!sol_prime->included[i]) {
-                    sol_prime->included[i] = 1;
+                    // sol_prime->included[i] = 1;
+                    add_item(sol_prime, i);
                     sol_prime->total_weight += instance->items[i].weight;
                     sol_prime->total_value += instance->items[i].value;
                 }
@@ -24,7 +25,8 @@ void xor_perturb_solution(const KnapsackInstance *instance, const Solution *sol,
         } else {
             // Try to remove item in final solution
             if (sol_prime->included[i]) {
-                sol_prime->included[i] = 0;
+                // sol_prime->included[i] = 0;
+                remove_item(sol_prime, i);
                 sol_prime->total_weight -= instance->items[i].weight;
                 sol_prime->total_value -= instance->items[i].value;
             }

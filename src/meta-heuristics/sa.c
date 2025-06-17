@@ -16,7 +16,7 @@
 #include "../perturbation/overhaul_perturbation.c"
 
 // Implementation of algorithm iterated local search
-Solution* simulated_annealing(KnapsackInstance *instance, int max_iterations, double T, double t_0, double alpha, int no_change_limit, char *type_improvement) {
+Solution* simulated_annealing(KnapsackInstance *instance, int max_iterations, double T, double t_0, double alpha, char *type_improvement) {
     // Build a initial solution using a constructive algorithm
     printf("Point 7\n");
     Solution *init_sol = build_initial_solution_2(instance);
@@ -26,15 +26,16 @@ Solution* simulated_annealing(KnapsackInstance *instance, int max_iterations, do
     Solution *sol_star = create_solution(instance->item_count);
     Solution *sol_prime = create_solution(instance->item_count);
     Solution *sol_double_prime = create_solution(instance->item_count);
+    Solution *sol_star_prime = create_solution(instance->item_count);
     printf("Point 9\n");
     int prev_obj_val = objective_value(init_sol);
     int no_change = 0;
-    // typedef void (*NeighborhoodFunc)(const KnapsackInstance *, const Solution*, Solution *);
-    // NeighborhoodFunc neighborhoodfuncs[] = {try_add_item_neighboord, try_remove_item_neighboord, try_swap_item_neighboord};
-    // int neighborhoodfuncs_count = 3;
-    typedef void (*NeighborhoodFunc)(const KnapsackInstance *, const Solution *, Solution *);
-    NeighborhoodFunc neighborhoodfuncs[] = {flip_perturb_solution, hybrid_perturb_solution, remove_perturb_solution, add_perturb_solution, xor_perturb_solution};
-    int neighborhoodfuncs_count = 5;
+    typedef void (*NeighborhoodFunc)(const KnapsackInstance *, const Solution*, Solution *);
+    NeighborhoodFunc neighborhoodfuncs[] = {try_add_item_neighboord, try_remove_item_neighboord, try_swap_item_neighboord};
+    int neighborhoodfuncs_count = 3;
+    // typedef void (*NeighborhoodFunc)(const KnapsackInstance *, const Solution *, Solution *);
+    // NeighborhoodFunc neighborhoodfuncs[] = {flip_perturb_solution, hybrid_perturb_solution, remove_perturb_solution, add_perturb_solution, xor_perturb_solution};
+    // int neighborhoodfuncs_count = 5;
     printf("Point 10\n");
 
     // Apply local search on initial solution
@@ -48,7 +49,10 @@ Solution* simulated_annealing(KnapsackInstance *instance, int max_iterations, do
     double t = t_0;
 
     while (t > T) {
+        // printf("Variable t: %f\n", t);
         while (iter < max_iterations) {
+            printf("Variable t: %.6f\n", t);
+            printf("Iteration iter: %d\n", iter);
             iter += 1;
             int idx = rand() % neighborhoodfuncs_count;
             void (*neighborhoodfunc)(const KnapsackInstance *, const Solution *, Solution *) = neighborhoodfuncs[idx];
@@ -58,9 +62,11 @@ Solution* simulated_annealing(KnapsackInstance *instance, int max_iterations, do
             int delta = objective_value(sol_double_prime) - objective_value(sol_prime);
             printf("Point 14\n");
             if (delta >= 0) {
-                copy_solution(instance, sol_prime, sol_double_prime);
+                copy_solution(instance, sol_double_prime, sol_prime);
                 if (objective_value(sol_star) < objective_value(sol_prime)) {
-                    copy_solution(instance, sol_prime, sol_star);
+                    // Optional hibridization
+                    rvnd_local_search(instance, sol_prime, sol_star_prime, type_improvement);
+                    copy_solution(instance, sol_star_prime, sol_star);
                     printf("Point 15\n");
                 }
                 else {
@@ -81,5 +87,6 @@ Solution* simulated_annealing(KnapsackInstance *instance, int max_iterations, do
     printf("Point 18\n");
     free_solution(sol_double_prime);
     printf("Point 19\n");
+    free_solution(sol_star_prime);
     return sol_star;
 }

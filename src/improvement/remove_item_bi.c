@@ -11,7 +11,8 @@ int try_remove_item_bi(const KnapsackInstance *instance, Solution *sol) {
     for (int i = 0; i < instance->item_count; i++) {
         if (sol->included[i]) {
             // Try removing item
-            sol->included[i] = 0;
+            // sol->included[i] = 0;
+            remove_item(sol, i);
 
             // Recompute total weight and value
             int new_weight = sol->total_weight - instance->items[i].weight;
@@ -32,6 +33,7 @@ int try_remove_item_bi(const KnapsackInstance *instance, Solution *sol) {
             }
             // Revert removal
             sol->included[i] = 1;
+            add_item(sol, i);
         }
     }
 
@@ -39,6 +41,7 @@ int try_remove_item_bi(const KnapsackInstance *instance, Solution *sol) {
     if (best_idx != -1) {
         // Update solution with best move
         sol->included[best_idx] = 0;
+        remove_item(sol, best_idx);
         sol->total_weight -= instance->items[best_idx].weight;
         sol->total_value -= instance->items[best_idx].value;
         sol->total_penalty = compute_penalty(instance, sol);

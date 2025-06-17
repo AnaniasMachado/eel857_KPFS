@@ -38,6 +38,7 @@ Solution* iterated_local_search(KnapsackInstance *instance, int max_iterations, 
 
     printf("Is same solution after ls? %d\n", is_same_solution(instance, init_sol, sol_star));
     free_solution(init_sol);
+    printf("Point 8.5\n");
 
     // Enhance solution until max_iterations
     for (int k = 0; k <= max_iterations; ++k) {

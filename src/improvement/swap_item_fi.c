@@ -16,8 +16,10 @@ int try_swap_item_fi(const KnapsackInstance *instance, Solution *sol) {
                 int idx_j = indices_arr[j];
                 if (!sol->included[idx_j]) {
                     // Try swapping i with j
-                    sol->included[idx_i] = 0;
-                    sol->included[idx_j] = 1;
+                    // sol->included[idx_i] = 0;
+                    // sol->included[idx_j] = 1;
+                    remove_item(sol, idx_i);
+                    add_item(sol, idx_j);
 
                     // Check scapacity
                     int new_weight = sol->total_weight - instance->items[idx_i].weight + instance->items[idx_j].weight;
@@ -39,8 +41,10 @@ int try_swap_item_fi(const KnapsackInstance *instance, Solution *sol) {
                         }
                     }
                     // Revert swap
-                    sol->included[idx_i] = 1;
-                    sol->included[idx_j] = 0;
+                    // sol->included[idx_i] = 1;
+                    // sol->included[idx_j] = 0;
+                    add_item(sol, idx_i);
+                    remove_item(sol, idx_j);
                 }
             }
         }

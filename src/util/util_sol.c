@@ -146,6 +146,33 @@ Solution* build_initial_solution_2(const KnapsackInstance *instance) {
         }
     }
     free(indices_arr);
+    printf("Builded solution\n");
+    return sol;
+}
+
+Solution* build_initial_solution_3(const KnapsackInstance *instance) {
+    Solution *sol = create_solution(instance->item_count);
+    double capacity_threshold = 0.6;
+    while (sol->total_weight <= capacity_threshold * instance->capacity) {
+        int best_obj = objective_value(sol);
+        int best_idx = -1; 
+        for (int i = 0; i < sol->size_not_included; i++) {
+            int idx = sol->not_included_items[i];
+            sol->included[idx] = 1;
+            sol->total_penalty = compute_penalty(instance, sol);
+            if (objective_value(sol) > best_obj && is_feasible(instance, sol)) {
+                best_obj = objective_value(sol);
+                best_idx = idx;
+            }
+            sol->included[idx] = 0;
+            sol->total_penalty = compute_penalty(instance, sol);
+        }
+        if (best_idx == -1) {
+            return sol;
+        } else {
+            add_item(sol, best_idx);
+        }
+    }
     return sol;
 }
 
@@ -184,6 +211,14 @@ void copy_solution(const KnapsackInstance *instance, const Solution *src, Soluti
     dest->total_value = src->total_value;
     dest->total_weight = src->total_weight;
     dest->total_penalty = src->total_penalty;
+    for (int i = 0; i < src->size_included; i++) {
+        dest->included_items[i] = src->included_items[i];
+    }
+    for (int i = 0; i < src->size_not_included; i++) {
+        dest->not_included_items[i] = src->not_included_items[i];
+    }
+    dest->size_included = src->size_included;
+    dest->size_not_included = src->size_not_included;
 }
 
 // Free solution memory
@@ -226,6 +261,23 @@ void remove_item(Solution *sol, int idx) {
     // Remove item from list of included items
     sol->included_items[idx] = sol->included_items[sol->size_included];
     sol->size_included -= 1;
+}
+
+int is_tabu(const KnapsackInstance *instance, Solution *sol, int **tabu_list, int size) {
+    for (int i = 0; i < size; i++) {
+        int eval = 1;
+        int* sol_col = tabu_list[i];
+        for (int j = 0; j < instance->item_count; j++) {
+            if (sol_col[j] != sol->included_items[j]) {
+                eval = 0;
+                break;
+            }
+        }
+        if (eval == 1) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 // // Acceptance criterion to choose a solution

@@ -57,10 +57,6 @@ int main() {
         mean_obj_val = total_obj_val / 10;
         mean_elapsed_time = total_elapsed / 10;
 
-        // printf("Solution objective value: %d\n", objective_value(sol));
-        // printf("Viability: %d\n", instance.capacity - sol->total_weight);
-        // printf("Time: %.9f\n", elapsed);
-
         printf("Mean solution objective value: %f\n", mean_obj_val);
         printf("Mean time: %.3f\n", mean_elapsed_time);
 

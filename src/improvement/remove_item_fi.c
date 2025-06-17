@@ -13,7 +13,8 @@ int try_remove_item_fi(const KnapsackInstance *instance, Solution *sol) {
         int idx = indices_arr[i];
         if (sol->included[idx]) {
             // Try removing item
-            sol->included[idx] = 0;
+            // sol->included[idx] = 0;
+            remove_item(sol, idx);
 
             // Recompute total weight and value
             int new_weight = sol->total_weight - instance->items[idx].weight;
@@ -35,7 +36,8 @@ int try_remove_item_fi(const KnapsackInstance *instance, Solution *sol) {
                 }
             }
             // Revert removal
-            sol->included[idx] = 1;
+            // sol->included[idx] = 1;
+            add_item(sol, idx);
         }
     }
     free(indices_arr);

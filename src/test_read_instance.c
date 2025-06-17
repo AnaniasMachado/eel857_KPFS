@@ -17,14 +17,21 @@ int main() {
         printf("Capacity: %d\n", instance.capacity);
         printf("Number of forfeit sets: %d\n", instance.forfeit_count);
 
-        int id = 0;
+        // int id = 0;
 
-        printf("Forfeit set size: %d\n", instance.forfeit_sets[id].size);
-        printf("Forfeit set threshold: %d\n", instance.forfeit_sets[id].threshold);
-        printf("Forfeit set penalty: %d\n", instance.forfeit_sets[id].penalty);
+        // printf("Forfeit set size: %d\n", instance.forfeit_sets[id].size);
+        // printf("Forfeit set threshold: %d\n", instance.forfeit_sets[id].threshold);
+        // printf("Forfeit set penalty: %d\n", instance.forfeit_sets[id].penalty);
 
-        for (int i = 0; i < instance.forfeit_sets[id].size; i++) {
-            printf("%d \n", instance.forfeit_sets[id].items[i]);
+        // for (int i = 0; i < instance.forfeit_sets[id].size; i++) {
+        //     printf("%d \n", instance.forfeit_sets[id].items[i]);
+        // }
+
+        for (int i = 0; i < instance.forfeit_count; i++) {
+            for (int j = 0; j < instance.item_count; j++) {
+                printf("%d ", instance.F[i][j]);
+            }
+            printf("\n");
         }
 
         // Free memory
