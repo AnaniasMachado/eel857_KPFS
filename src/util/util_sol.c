@@ -146,7 +146,7 @@ Solution* build_initial_solution_2(const KnapsackInstance *instance) {
         }
     }
     free(indices_arr);
-    printf("Builded solution\n");
+    // printf("Builded solution\n");
     return sol;
 }
 

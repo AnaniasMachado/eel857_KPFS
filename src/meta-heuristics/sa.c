@@ -38,10 +38,6 @@ Solution* simulated_annealing(KnapsackInstance *instance, int max_iterations, do
     // int neighborhoodfuncs_count = 5;
     printf("Point 10\n");
 
-    // Apply local search on initial solution
-    rvnd_local_search(instance, init_sol, sol_star, type_improvement);
-    printf("Point 11\n");
-
     printf("Is same solution after ls? %d\n", is_same_solution(instance, init_sol, sol_star));
     free_solution(init_sol);
 
